@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.klarna</groupId>
     <artifactId>hiverunner</artifactId>
-    <version>3.2.1-cdh5.10.0-SNAPSHOT</version>
+    <version>3.2.1-cdh5.10.0</version>
     <packaging>jar</packaging>
     <name>HiveRunner</name>
     <description>HiveRunner is a unit test framework based on JUnit4 and enables TDD development of HiveQL without the
@@ -42,7 +41,8 @@
     <!--</scm>-->
     <scm>
         <connection>scm:git:https://github.com/ProfessorEugene/HiveRunner.git</connection>
-    </scm>
+      <tag>hiverunner-3.2.1-cdh5.10.0</tag>
+  </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
