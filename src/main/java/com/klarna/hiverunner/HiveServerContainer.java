@@ -22,15 +22,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.klarna.hiverunner.sql.StatementsSplitter;
 import org.apache.hadoop.hive.conf.HiveConf;
+import org.apache.hadoop.hive.conf.HiveVariableSource;
+import org.apache.hadoop.hive.conf.VariableSubstitution;
 import org.apache.hadoop.hive.ql.exec.tez.TezJobMonitor;
-import org.apache.hadoop.hive.ql.parse.VariableSubstitution;
 import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hive.service.Service;
-import org.apache.hive.service.cli.CLIService;
-import org.apache.hive.service.cli.HiveSQLException;
-import org.apache.hive.service.cli.OperationHandle;
-import org.apache.hive.service.cli.RowSet;
-import org.apache.hive.service.cli.SessionHandle;
+import org.apache.hive.service.cli.*;
 import org.apache.hive.service.server.HiveServer2;
 import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
@@ -182,7 +179,9 @@ public class HiveServerContainer {
         }
 
         try {
-            client.closeSession(sessionHandle);
+            // client.closeSession(..); seems to cause all kinds of classloading problems with CDH hive; running client#stop instead
+            client.stop();
+            //client.closeSession(sessionHandle);
         } catch (Throwable e) {
             LOGGER.warn(
                     "Failed to close client session: " + e.getMessage() + ". Turn on log level debug for stacktrace");
@@ -219,7 +218,13 @@ public class HiveServerContainer {
         // Make sure to set the session state for this thread before returning the VariableSubstitution. If not set,
         // hivevar:s will not be evaluated.
         SessionState.setCurrentSessionState(currentSessionState);
-        return new VariableSubstitution();
+        // CDH compat version of VariableSubstitution
+        return new VariableSubstitution(new HiveVariableSource() {
+            @Override
+            public Map<String, String> getHiveVariable() {
+                return currentSessionState.getHiveVariables();
+            }
+        });
     }
 }
 

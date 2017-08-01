@@ -20,11 +20,13 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.klarna.hiverunner.annotations.HiveSQL;
 
+@Ignore("CDH incompat")
 @RunWith(StandaloneHiveRunner.class)
 public class CommentTest {
   @HiveSQL(files = {"commentTest/comment.sql"})

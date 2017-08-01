@@ -135,11 +135,13 @@ public class StandaloneHiveServerContext implements HiveServerContext {
         /*
         General attempts to strip of unnecessary functionality to speed up test execution and increase stability
          */
-        conf.set(TezConfiguration.TEZ_AM_USE_CONCURRENT_DISPATCHER, "false");
+        /* not available in CDH ver. of tez */
+        /* conf.set(TezConfiguration.TEZ_AM_USE_CONCURRENT_DISPATCHER, "false"); */
         conf.set(TezConfiguration.TEZ_AM_CONTAINER_REUSE_ENABLED, "false");
         conf.set(TezConfiguration.DAG_RECOVERY_ENABLED, "false");
         conf.set(TezConfiguration.TEZ_TASK_GET_TASK_SLEEP_INTERVAL_MS_MAX, "1");
-        conf.set(TezConfiguration.TEZ_AM_WEBSERVICE_ENABLE, "false");
+        /* not available in CDH ver. of tez */
+        /* conf.set(TezConfiguration.TEZ_AM_WEBSERVICE_ENABLE, "false"); */
         conf.set(TezConfiguration.DAG_RECOVERY_ENABLED, "false");
         conf.set(TezConfiguration.TEZ_AM_NODE_BLACKLISTING_ENABLED, "false");
     }

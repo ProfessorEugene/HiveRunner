@@ -1,12 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.klarna</groupId>
     <artifactId>hiverunner</artifactId>
-    <version>3.2.1-SNAPSHOT</version>
+    <version>3.2.1-cdh5.10.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>HiveRunner</name>
-    <description>HiveRunner is a unit test framework based on JUnit4 and enables TDD development of HiveQL without the need of any installed dependencies.</description>
+    <description>HiveRunner is a unit test framework based on JUnit4 and enables TDD development of HiveQL without the
+        need of any installed dependencies.
+    </description>
     <url>https://github.com/klarna/HiveRunner</url>
 
     <licenses>
@@ -30,6 +33,7 @@
         </developer>
     </developers>
 
+    <!-- replacing original SCM setup for PulsePoint release -->
     <scm>
         <connection>scm:git:https://github.com/klarna/HiveRunner.git</connection>
         <developerConnection>scm:git:https://github.com/klarna/HiveRunner.git</developerConnection>
@@ -39,12 +43,39 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tez.version>0.7.0</tez.version>
-        <hive.version>1.2.1</hive.version>
+        <!-- tez version from cdh5.10.0 hive distribution -->
+        <tez.version>0.5.2</tez.version>
+        <!-- cdh 5.10.0 hive distro -->
+        <hive.version>1.1.0-cdh5.10.0</hive.version>
         <hive.execution.engine>mr</hive.execution.engine>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>cloudera</id>
+            <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+
+        <!--
+            This is a nasty jar; it provides classes necessary to write UDFs but it also packages several libraries internally including google guava
+        -->
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-exec</artifactId>
+            <version>${hive.version}</version>
+            <!--<scope>provided</scope>-->
+            <exclusions>
+                <!-- guava is provided inside of the hive-exec jar -->
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-serde</artifactId>
@@ -56,12 +87,45 @@
             <artifactId>hive-jdbc</artifactId>
             <version>${hive.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.hive.hcatalog</groupId>
             <artifactId>hive-webhcat-java-client</artifactId>
             <version>${hive.version}</version>
+            <exclusions>
+                <!-- guava is provided inside of the hive-exec jar -->
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-common</artifactId>
+            <version>2.6.0-cdh5.10.0</version>
+            <exclusions>
+                <!-- guava is provided inside of the hive-exec jar -->
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>2.6.0-cdh5.10.0</version>
+            <exclusions>
+                <!-- guava is provided inside of the hive-exec jar -->
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- end er -->
 
 
         <dependency>
@@ -119,19 +183,41 @@
             <artifactId>tez-dag</artifactId>
             <groupId>org.apache.tez</groupId>
             <version>${tez.version}</version>
+            <exclusions>
+                <!-- guava is provided inside of the hive-exec jar -->
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <artifactId>tez-common</artifactId>
             <groupId>org.apache.tez</groupId>
             <version>${tez.version}</version>
+            <exclusions>
+                <!-- guava is provided inside of the hive-exec jar -->
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <artifactId>tez-mapreduce</artifactId>
             <groupId>org.apache.tez</groupId>
             <version>${tez.version}</version>
+            <exclusions>
+                <!-- guava is provided inside of the hive-exec jar -->
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
 
         <dependency>
             <artifactId>datanucleus-core</artifactId>
@@ -156,6 +242,13 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.8</version>
+            <exclusions>
+                <!-- guava is provided inside of the hive-exec jar -->
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Always put this before JUnit or the class loader might load the wrong Matcher -->
@@ -176,7 +269,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>provided</scope>
         </dependency>
 
@@ -269,24 +362,25 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <configuration>
-                                    <homedir>${project.basedir}</homedir>
-                                    <passphrase>${env.GPG_PASSPHRASE}</passphrase>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+
+                    <!--<plugin>-->
+                    <!--<groupId>org.apache.maven.plugins</groupId>-->
+                    <!--<artifactId>maven-gpg-plugin</artifactId>-->
+                    <!--<version>1.6</version>-->
+                    <!--<executions>-->
+                    <!--<execution>-->
+                    <!--<id>sign-artifacts</id>-->
+                    <!--<phase>verify</phase>-->
+                    <!--<goals>-->
+                    <!--<goal>sign</goal>-->
+                    <!--</goals>-->
+                    <!--<configuration>-->
+                    <!--<homedir>${project.basedir}</homedir>-->
+                    <!--<passphrase>${env.GPG_PASSPHRASE}</passphrase>-->
+                    <!--</configuration>-->
+                    <!--</execution>-->
+                    <!--</executions>-->
+                    <!--</plugin>-->
                 </plugins>
             </build>
         </profile>
